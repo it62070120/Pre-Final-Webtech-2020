@@ -12,12 +12,47 @@
     <title>Pre-Final Webtech 2020/2</title>
 </head>
 <body>
+    <?php
+        if(isset($_POST['submit'])) {
+            $url = "https://dd-wtlab2020.netlify.app/pre-final/ezquiz.json";    
+            $response = file_get_contents($url);
+            $result = json_decode($response);
+            $tracks = $result->tracks;
+            $items = $tracks->items;
+
+            $name = $_POST['search'];
+            $check = 1;
+            foreach ($items as $item) {
+                $album = $item->album;
+                $artists = $album->artists;
+                $available_markets = $album->available_markets;
+                $count = 0;
+                foreach ($artists as $artist) {
+                    if ($name == $album->name || $name == $artist) {
+                        echo "<div class='card m-3 mt-4 mb-4'><div class='card-header p-0'><img src='";
+                        foreach ($album->images as $image)
+                            if ($image->height == 640) echo "$image->url'></div>";
+                        echo "<div class='card-body'><h2>$album->name</h2><p>Artist: ";
+                        foreach ($artists as $artist) echo "$artist->name</p><p>Releasa date: $album->release_date</p><p>Avaliable: ";
+                        foreach ($available_markets as $available_market) $count++;
+                        echo "$count countries</p></div></div>";
+                        $check = 0;
+                    }
+                }
+                if ($check == 1) echo "Not Found";
+            }
+        }
+    ?>
+
+
     <div class="container-fluid">
-        <form method="POST"></form>
-            <h3>ระบุคำค้นหา</h3>
-            <input type="text" id="search" name="search" style="width: 80%">
-            <input class="btn btn-success ml-3 p-2" type="submit" value="Convert" name="submit">
-        </form>
+        <center>
+            <form method="POST" class="mt-5"></form>
+                <h3>ระบุคำค้นหา</h3>
+                <input type="text" id="search" name="search" style="width: 80%">
+                <input class="btn btn-success ml-3 p-2" type="submit" value="ค้าหา" name="submit">
+            </form>
+        </center>
 
 
         <?php
